@@ -19,13 +19,7 @@
 import xml.etree.ElementTree as ET
 import math
 
-try:
-    from ipywidgets import Layout, HTML
-
-    ipy_loaded = True
-except ModuleNotFoundError:
-    print("Jupyter not found, using standard wrapper")
-    ipy_loaded = False
+from problem_visuals.graphics.svg_handling import attrs_f, svg_f, SvgProducer
 
 PIECES = {
     "b": """<g id="black-bishop" class="black bishop" fill="none" fill-rule="evenodd" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 36c3.39-.97 10.11.43 13.5-2 3.39 2.43 10.11 1.03 13.5 2 0 0 1.65.54 3 2-.68.97-1.65.99-3 .5-3.39-.97-10.11.46-13.5-1-3.39 1.46-10.11.03-13.5 1-1.354.49-2.323.47-3-.5 1.354-1.94 3-2 3-2zm6-4c2.5 2.5 12.5 2.5 15 0 .5-1.5 0-2 0-2 0-2.5-2.5-4-2.5-4 5.5-1.5 6-11.5-5-15.5-11 4-10.5 14-5 15.5 0 0-2.5 1.5-2.5 4 0 0-.5.5 0 2zM25 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 1 1 5 0z" fill="#000" stroke-linecap="butt"/><path d="M17.5 26h10M15 30h15m-7.5-14.5v5M20 18h5" stroke="#fff" stroke-linejoin="miter"/></g>""",
@@ -70,68 +64,7 @@ PIECE_CLASS_REF = {
 }
 
 
-def attrs_f(attrs):
-    return {k: str(v) for k, v in attrs.items() if v is not None}
-
-
-def svg_f(viewbox: int, size: int = None) -> ET.Element:
-    svg = ET.Element("svg", {
-        "xmlns": "http://www.w3.org/2000/svg",
-        "xmlns:xlink": "http://www.w3.org/1999/xlink",
-        "version": "1.2",
-        "baseProfile": "tiny",
-        "viewBox": f"0 0 {viewbox:d} {viewbox:d}",
-    })
-    if size is not None:
-        svg.set("width", str(size))
-        svg.set("height", str(size))
-    return svg
-
-
-class SvgWrapper(str):
-    def _repr_svg_(self):
-        return self
-
-    def save_svg(self, file):
-        with open(file, "w") as f:
-            f.write(self)
-
-
-def prepare_output(svg, ipy_off=False, html_width="25%"):
-    svg = SvgWrapper(ET.tostring(svg).decode("utf-8"))
-    if ipy_loaded and not ipy_off:
-        html_wrapper = f'<div style="{html_width}">{svg}</div>'
-        svg_widget = HTML(value=html_wrapper, layout=Layout(grid_area="top"))
-        return svg_widget
-    return svg
-
-
-def create_base(n: int = 8, SQUARE_SIZE: int = 16, size: int = None):
-    svg = svg_f(n * SQUARE_SIZE, size)
-    fields = [(file, rank) for file in range(n) for rank in range(n)]
-    defs = ET.SubElement(svg, "defs")
-    for _, piece_string in PIECES.items():
-        defs.append(ET.fromstring(piece_string))
-    for file_index, rank_index in fields:
-        x = file_index * SQUARE_SIZE
-        y = rank_index * SQUARE_SIZE
-        light = (file_index + rank_index) % 2 == 0
-        cls = ["square", "light" if light else "dark"]
-        square_color = "#ffce9e" if light else "#d18b47"
-        ET.SubElement(svg, "rect", attrs_f({
-            "x": x,
-            "y": y,
-            "width": SQUARE_SIZE,
-            "height": SQUARE_SIZE,
-            "class": " ".join(cls),
-            "stroke": "none",
-            "fill": square_color,
-            "opacity": 1.0,
-        }))
-    return svg
-
-
-class Board:
+class Board(SvgProducer):
 
     def add_piece(self, position: tuple, piece: str):
         svg = self.raw_svg
@@ -206,32 +139,40 @@ class Board:
 
         return self
 
-        return self
-
     def __init__(self, n: int = 8, SQUARE_SIZE: int = 16, size: int = None, ipy_off: bool = False,
                  html_width: str = "25%"):
         self.n = n
         self.SQUARE_SIZE = SQUARE_SIZE
         self.size = size
-        self.ipy_off = ipy_off
-        self.html_width = html_width
         self.scale = SQUARE_SIZE / 45
-        self.raw_svg = create_base(n, SQUARE_SIZE, size)
+        viewbox = SQUARE_SIZE * n
+        super().__init__(viewbox, viewbox, ipy_off, html_width)
+        defs = self.defs
+        svg = self.raw_svg
+        fields = [(file, rank) for file in range(n) for rank in range(n)]
+        for _, piece_string in PIECES.items():
+            defs.append(ET.fromstring(piece_string))
+        for file_index, rank_index in fields:
+            x = file_index * SQUARE_SIZE
+            y = rank_index * SQUARE_SIZE
+            light = (file_index + rank_index) % 2 == 0
+            cls = ["square", "light" if light else "dark"]
+            square_color = "#ffce9e" if light else "#d18b47"
+            ET.SubElement(svg, "rect", attrs_f({
+                "x": x,
+                "y": y,
+                "width": SQUARE_SIZE,
+                "height": SQUARE_SIZE,
+                "class": " ".join(cls),
+                "stroke": "none",
+                "fill": square_color,
+                "opacity": 1.0,
+            }))
 
-    def _repr_html_(self):
-        return "<div style='width:{}'>{}</div>".format(self.html_width, prepare_output(self.raw_svg, ipy_off=True))
 
-    def present(self):
-        return prepare_output(self.raw_svg, ipy_off=self.ipy_off, html_width=self.html_width)
-
-    def save_svg(self, file):
-        with open(file, "w") as f:
-            f.write(ET.tostring(self.raw_svg).decode("utf-8"))
-
-
-def paint_problem_board(n: int = 8, SQUARE_SIZE: int = 16, size: int = None, ipy_off=False, Qs: list = None,
-                        K_start: tuple = None, K_path: list = None, html_width: str = "25%", arrow_color="white",
-                        arrow_width=1):
+def problem_board(n: int = 8, SQUARE_SIZE: int = 16, size: int = None, ipy_off=False, Qs: list = None,
+                  K_start: tuple = None, K_path: list = None, html_width: str = "25%", arrow_color="white",
+                  arrow_width=1):
     board = Board(n, SQUARE_SIZE, size, ipy_off, html_width)
 
     if Qs:
@@ -267,7 +208,7 @@ def knight_tour(n: int, K_start: tuple, K_path: list,
 
     while len(K_path) > 0:
         board = Board(n=n, SQUARE_SIZE=SQUARE_SIZE, size=size, ipy_off=ipy_off,
-                      html_width=html_width, arrow_width= arrow_width, arrow_color=arrow_color)
+                      html_width=html_width, arrow_width=arrow_width, arrow_color=arrow_color)
         board.add_piece(K_start, "N")
 
         visited.append(K_start)
