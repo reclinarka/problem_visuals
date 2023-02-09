@@ -50,7 +50,7 @@ def read_description():
 
 
 setuptools.setup(
-    name="chess_problem_visuals",
+    name="problem_visuals",
     version=problem_visuals.__version__,
     author=problem_visuals.__author__,
     author_email=problem_visuals.__email__,
