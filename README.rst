@@ -46,6 +46,8 @@ Features <WIP>
         .. image:: https://i.imgur.com/n8azSne.png
             :alt: A 9x9 board
 
+        Examples: https://github.com/reclinarka/problem_visuals/blob/master/examples/games/chess.ipynb
+
     * Sudoku
 
         .. code:: python
@@ -58,6 +60,8 @@ Features <WIP>
         .. image:: https://i.imgur.com/sF3anv6.png
             :alt: A 9x9 board
 
+        Examples: https://github.com/reclinarka/problem_visuals/blob/master/examples/games/sudoku.ipynb
+
 * Puzzles
 
     * Coloring
@@ -68,5 +72,7 @@ Features <WIP>
         >>> Australia(Solution = assignment)
 
     .. image:: https://i.imgur.com/uXtA7tH.png
+
+    Examples: https://github.com/reclinarka/problem_visuals/blob/master/examples/puzzles/coloring.ipynb
 
     * Logic
