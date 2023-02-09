@@ -24,7 +24,7 @@ __author__ = "Philipp Polland"
 
 __email__ = "contact@philipp-polland.dev"
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 
 # from problem_visuals.puzzles.logic.brothers_and_sisters import as
 # from problem_visuals.puzzles.logic.zebra import as
