@@ -62,4 +62,11 @@ Features <WIP>
 
     * Coloring
 
+    .. code:: python
+
+        >>> assignment = { "WA":"red", "NT":"green", ... "T":"green", }
+        >>> Australia(Solution = assignment)
+
+    .. image:: https://i.imgur.com/uXtA7tH.png
+
     * Logic

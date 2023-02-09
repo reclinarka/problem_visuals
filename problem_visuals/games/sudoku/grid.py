@@ -6,7 +6,6 @@ class Grid(SvgProducer):
     margin_x = 6
     margin_y = 5
 
-
     def __init__(self, viewbox: int = 180, ipy_off: bool = False, html_width: str = "25%",
                  state: list = None, square_size: int = 20, assigned: dict = None, highlight: str = "#99ff33"):
         super().__init__(viewbox, viewbox, ipy_off, html_width)
