@@ -60,7 +60,7 @@ setuptools.setup(
     license="GPL-3.0+",
     keywords="Problems visualization",
     url="https://github.com/reclinarka/problem-visuals",
-    packages=["problem_visuals"],
+    packages=setuptools.find_packages(),
     test_suite="test",
     zip_safe=False,  # For mypy
     package_data={
