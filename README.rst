@@ -14,7 +14,7 @@ Requires Python 3.7+. Download and install the latest release:
 
 ::
 
-    pip install git+https://github.com/reclinarka/problem-visuals
+    pip install git+https://github.com/reclinarka/problem_visuals
 
 Documentation <WIP>
 -------------------
