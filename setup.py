@@ -58,13 +58,13 @@ setuptools.setup(
     long_description=read_description(),
     long_description_content_type="text/x-rst",
     license="GPL-3.0+",
-    keywords="chess problems visualization",
-    url="https://github.com/reclinarka/chess-problem-visuals",
-    packages=["chess_problem_visuals"],
+    keywords="Problems visualization",
+    url="https://github.com/reclinarka/problem-visuals",
+    packages=["problem_visuals"],
     test_suite="test",
     zip_safe=False,  # For mypy
     package_data={
-        "chess_problem_visuals": ["py.typed"],
+        "problem_visuals": ["py.typed"],
     },
     python_requires=">=3.7",
     classifiers=[
