@@ -11,7 +11,7 @@ class Grid(SvgProducer):
         super().__init__(viewbox, viewbox, ipy_off, html_width)
         self.square_size = square_size
         self.setup_grid()
-        self.checker = [[False for i in range(9)] for j in range(9)]
+        self.checker = [[None for i in range(9)] for j in range(9)]
         if state:
             self.state = state
             for x in range(9):
@@ -25,7 +25,7 @@ class Grid(SvgProducer):
                 self.add_number(val, row, col, highlight)
 
     def add_number(self, number: int, row, col, color: str = "black"):
-        assert not self.checker[row][col], f"Double assignment of {row},{col}"
+        assert not isinstance(self.checker[row][col], ET.Element), f"Double assignment of {row},{col}"
         x = col * 20 + self.margin_x
         y = (row + 1) * 20 - self.margin_y
         svg = self.raw_svg
@@ -36,16 +36,38 @@ class Grid(SvgProducer):
             "fill": color,
         }))
         num.text = str(number)
-        self.checker[row][col] = True
+        self.checker[row][col] = num
+        return self
+
+    def remove_number(self, row: int, col: int):
+        assert isinstance(self.checker[row][col], ET.Element), f"No element at {row},{col}"
+        svg = self.raw_svg
+        svg.remove(self.checker[row][col])
+        self.checker[row][col] = False
+        return self
+
+    def change_number(self, number: int, row: int, col: int, color: str = "black"):
+        assert isinstance(self.checker[row][col], ET.Element), f"No element at {row},{col}"
+        self.checker[row][col].text = str(number)
+        self.checker[row][col].attrib["fill"] = color
+        self.checker[row][col].attrib["stroke"] = color
         return self
 
     def setup_grid(self):
         svg = self.raw_svg
         square_size = self.square_size
+        square_highlighted = 0
+
         # field accents
         for row in range(9):
+            square_highlighted = 0 < (row) // 3 < 2
             for col in range(9):
-                color = "#6699cc" if (col + row) % 2 == 0 else "#79a6d2"
+                if col % 3 == 0:
+                    square_highlighted = not square_highlighted
+                if not square_highlighted:
+                    color = "#6699cc" if (col + row) % 2 == 0 else "#79a6d2"
+                else:
+                    color = "#538cc6" if (col + row) % 2 == 0 else "#8cb3d9"
                 ET.SubElement(svg, "rect", attrs_f({
                     "x": (col) * square_size,
                     "y": (row) * square_size,
@@ -60,9 +82,9 @@ class Grid(SvgProducer):
         max_coord = 9 * square_size
         for i in range(4):
             x = square_size * i * 3
-            add_line(svg, x, 0, x, max_coord, "white", 1)
+            add_line(svg, x, 0, x, max_coord, "white", 1.2)
         # horizontals
         for i in range(4):
             y = square_size * i * 3
-            add_line(svg, 0, y, max_coord, y, "white", 1)
+            add_line(svg, 0, y, max_coord, y, "white", 1.2)
         return self
