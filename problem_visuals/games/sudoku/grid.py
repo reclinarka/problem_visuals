@@ -75,8 +75,8 @@ class Grid(SvgProducer):
 
     def add_number(self, number: int, row, col, color: str = "black"):
         assert not isinstance(self.checker[row][col], ET.Element), f"Double assignment of {row},{col}"
-        x = col * 20 + self.margin_x
-        y = (row) * 20 - self.margin_y
+        x = col * self.square_size + self.margin_x
+        y = (row) * self.square_size - self.margin_y
         svg = self.raw_svg
         num = ET.SubElement(svg, "use", attrs_f({
             "href": NUMBER_REFS[str(number)],
