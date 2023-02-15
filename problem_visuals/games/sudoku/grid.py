@@ -80,7 +80,6 @@ class Grid(SvgProducer):
         num = ET.SubElement(svg, "use", attrs_f({
             "href": NUMBER_REFS[str(number)],
             "xlink:href": NUMBER_REFS[str(number)],
-            # I have absolutely no idea why, but I have to scale down the path for 2 twice as much.
             "transform": f"translate({x},{y}) scale({self.number_scale})",
             "stroke": color,
             "fill": color,
