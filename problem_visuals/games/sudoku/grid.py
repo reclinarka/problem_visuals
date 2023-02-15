@@ -46,14 +46,15 @@ NUMBER_REFS = {
 
 
 class Grid(SvgProducer):
-    margin_x = 1.5
-    margin_y = -1.5
+
 
     def __init__(self, viewbox: int = 180, ipy_off: bool = False, html_width: str = "25%",
                  state: list = None, square_size: int = 20, assigned: dict = None, highlight: str = "#99ff33"):
         super().__init__(viewbox, viewbox, ipy_off, html_width)
         self.square_size = square_size
-        self.number_scale = square_size / 120
+        self.number_scale = square_size / 150
+        self.margin_x = square_size*0.15
+        self.margin_y = square_size*-0.15
         self.setup_grid()
         defs = self.defs
         for _, num in NUMBERS.items():
