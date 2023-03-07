@@ -19,6 +19,7 @@
 import xml.etree.ElementTree as ET
 import math
 
+from problem_visuals.graphics.interactive_display import InteractiveDisplay
 from problem_visuals.graphics.svg_handling import attrs_f, svg_f, SvgProducer
 
 PIECES = {
@@ -64,7 +65,7 @@ PIECE_CLASS_REF = {
 }
 
 
-class Board(SvgProducer):
+class Board(InteractiveDisplay):
 
     def add_piece(self, position: tuple, piece: str):
         svg = self.raw_svg
